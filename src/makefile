@@ -6,6 +6,12 @@ LIBS = -lodbc32 -lodbccp32
 TARGET = app
 SRC = main.cpp
 
+# TARGET = driver-list
+# SRC = driver-list.cpp
+
+# TARGET = get-installed-drives
+# SRC = get-installed-drives.cpp
+
 $(TARGET): $(SRC)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
 

@@ -7,9 +7,9 @@ void ShowError(SQLSMALLINT handleType, SQLHANDLE handle);
 int main()
 {
 
-    SQLHENV hEnv = SQL_NULL_HENV;
-    SQLHDBC hDbc = SQL_NULL_HDBC;
-    SQLHSTMT hStmt = SQL_NULL_HSTMT;
+    SQLHENV hEnv = SQL_NULL_HENV;    // Môi trường ODBC
+    SQLHDBC hDbc = SQL_NULL_HDBC;    // Kết nối tới CSDL
+    SQLHSTMT hStmt = SQL_NULL_HSTMT; // Câu lệnh SQL
     SQLRETURN ret;
 
     // Tạo Environment Handle
@@ -56,50 +56,23 @@ int main()
 
         ret = SQLAllocHandle(SQL_HANDLE_STMT, hDbc, &hStmt);
 
-        if (!SQL_SUCCEEDED(ret))
+        ret = SQLExecDirectW(
+            hStmt,
+            (SQLWCHAR *)L"SELECT 1",
+            SQL_NTS);
+
+        SQLINTEGER id;
+        SQLLEN indicator;
+        while (SQLFetch(hStmt) != SQL_NO_DATA)
         {
-            ShowError(SQL_HANDLE_STMT, hStmt);
-        }
-        else
-        {
-            ret = SQLExecDirectW(
+            ret = SQLGetData(
                 hStmt,
-                (SQLWCHAR *)L"SELECT 1",
-                SQL_NTS);
-
-            if (!SQL_SUCCEEDED(ret))
-            {
-                ShowError(SQL_HANDLE_STMT, hStmt);
-            }
-            else
-            {
-                SQLINTEGER id;
-                SQLLEN indicator;
-                while ((ret = SQLFetch(hStmt)) != SQL_NO_DATA)
-                {
-                    if (!SQL_SUCCEEDED(ret))
-                    {
-                        ShowError(SQL_HANDLE_STMT, hStmt);
-                        break;
-                    }
-                    ret = SQLGetData(
-                        hStmt,
-                        1, // cột thứ 1
-                        SQL_C_LONG,
-                        &id,
-                        sizeof(id),
-                        &indicator);
-
-                    if (!SQL_SUCCEEDED(ret))
-                    {
-                        ShowError(SQL_HANDLE_STMT, hStmt);
-                    }
-                    else
-                    {
-                        std::wcout << L"Ret Id: " << id << std::endl;
-                    }
-                }
-            }
+                1, // cột thứ 1
+                SQL_C_LONG,
+                &id,
+                sizeof(id),
+                &indicator);
+            std::wcout << L"Ret Id: " << id << std::endl;
         }
     }
 

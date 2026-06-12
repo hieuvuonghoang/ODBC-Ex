@@ -96,53 +96,12 @@ int main()
                     }
                     else
                     {
-                        std::wcout << L"Id: " << id << std::endl;
+                        std::wcout << L"Ret Id: " << id << std::endl;
                     }
                 }
             }
         }
     }
-
-    //     ret = SQLExecDirectW(
-    //         hStmt,
-    //         (SQLWCHAR *)L"SELECT 1",
-    //         SQL_NTS);
-
-    //     if (!SQL_SUCCEEDED(ret))
-    //     {
-    //         ShowError(SQL_HANDLE_STMT, hStmt);
-    //         goto Exit;
-    //     }
-
-    //     SQLINTEGER id;
-    //     SQLLEN indicator;
-
-    //     while ((ret = SQLFetch(hStmt)) != SQL_NO_DATA)
-    //     {
-
-    //         if (!SQL_SUCCEEDED(ret))
-    //         {
-    //             ShowError(SQL_HANDLE_STMT, hStmt);
-    //             break;
-    //         }
-
-    //         ret = SQLGetData(
-    //             hStmt,
-    //             1, // cột thứ 1
-    //             SQL_C_LONG,
-    //             &id,
-    //             sizeof(id),
-    //             &indicator);
-
-    //         if (!SQL_SUCCEEDED(ret))
-    //         {
-    //             ShowError(SQL_HANDLE_STMT, hStmt);
-    //             goto Exit;
-    //         }
-
-    //         std::wcout << L"Id:" << std::endl;
-    //         std::wcout << id << std::endl;
-    //     }
 
     SQLDisconnect(hDbc);
     SQLFreeHandle(SQL_HANDLE_STMT, hStmt);

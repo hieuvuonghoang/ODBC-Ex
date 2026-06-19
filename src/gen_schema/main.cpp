@@ -16,20 +16,80 @@ std::vector<json> GetColumns(SQLWCHAR *);
 std::string GetError(SQLSMALLINT, SQLHANDLE);
 std::string WStringToUtf8(const std::wstring &);
 std::string ReadConnectionString();
-std::wstring Utf8ToWString(const std::string&);
+std::wstring Utf8ToWString(const std::string &);
+
+SQLHENV hEnv = SQL_NULL_HENV;    // Môi trường ODBC
+SQLHDBC hDbc = SQL_NULL_HDBC;    // Kết nối tới CSDL SQL Server
+SQLHSTMT hStmt = SQL_NULL_HSTMT; // Câu lệnh SQL
+SQLRETURN ret;
 
 int main()
 {
-    std::string connStr = ReadConnectionString();
-    std::wstring wConnStr = Utf8ToWString(connStr);
-    std::vector<json> columns = GetColumns((SQLWCHAR *)wConnStr.c_str());
-    if (columns.size() != 0)
+    try
     {
-        json j = json({{"system_name", "wineco"},
-                       {"business_unit", "wineco"},
-                       {"columns", columns}});
-        std::cout << j.dump(2) << std::endl;
+        std::string connStr = ReadConnectionString();
+        std::wstring wConnStr = Utf8ToWString(connStr);
+        ret = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &hEnv); // Tạo Environment Handle
+        ret = SQLSetEnvAttr(
+            hEnv,
+            SQL_ATTR_ODBC_VERSION,
+            (SQLPOINTER)SQL_OV_ODBC3,
+            0);
+        ret = SQLAllocHandle(SQL_HANDLE_DBC, hEnv, &hDbc); // Tạo Connection Handle
+        SQLWCHAR outConnStr[1024];
+        SQLSMALLINT outConnStrLen;
+        ret = SQLDriverConnectW(
+            hDbc,
+            NULL,
+            (SQLWCHAR *)wConnStr.c_str(),
+            SQL_NTS,
+            outConnStr,
+            sizeof(outConnStr) / sizeof(SQLWCHAR),
+            &outConnStrLen,
+            SQL_DRIVER_NOPROMPT);
+        if (!SQL_SUCCEEDED(ret))
+        {
+            throw std::runtime_error(GetError(SQL_HANDLE_DBC, hDbc));
+        }
+        std::vector<std::wstring> tables;
+        tables.push_back(L"capacitycontrol.FC40_DocumentDetails");
+        tables.push_back(L"capacitycontrol.FC40_Documents");
+        for (size_t i = 0; i < tables.size(); i++)
+        {
+            std::wstring table_name = tables.at(i);
+            std::wstring sql =
+                L"SELECT TOP (0) * "
+                L"FROM " +
+                table_name +
+                L" ORDER BY Id ASC";
+            std::vector<json> columns = GetColumns((SQLWCHAR *)sql.c_str());
+            std::wcout << sql << std::endl;
+        }
+        // capacitycontrol.FC40_DocumentDetails
+        // std::wstring tableName = L"capacitycontrol.FC40_DocumentDetails";
+        // std::wstring sql =
+        //     L"SELECT TOP (0) * "
+        //     L"FROM " +
+        //     tableName +
+        //     L" ORDER BY Id DESC";
+        // std::vector<json> columns = GetColumns((SQLWCHAR *)sql.c_str());
+        // if (columns.size() != 0)
+        // {
+        //     json j = json({{"system_name", "wineco"},
+        //                    {"business_unit", "wineco"},
+        //                    {"columns", columns}});
+        //     std::cout << j.dump(2) << std::endl;
+        // }
     }
+    catch (const std::exception &ex)
+    {
+        std::cerr << "Err: " << ex.what() << std::endl;
+    }
+    // Free
+    SQLDisconnect(hDbc);
+    SQLFreeHandle(SQL_HANDLE_STMT, hStmt);
+    SQLFreeHandle(SQL_HANDLE_DBC, hDbc);
+    SQLFreeHandle(SQL_HANDLE_ENV, hEnv);
     std::wcout << L"Press any key to exit...";
     _getch();
     return 0;
@@ -72,44 +132,18 @@ std::string GetTypeName(SQLSMALLINT type, std::string columnName)
     case SQL_VARBINARY:
     case SQL_LONGVARBINARY:
         return "BINARY";
+    case SQL_DECIMAL:
+        return "DECIMAL";
     default:
         throw std::runtime_error("Column " + columnName + ", type = " + std::to_string(type) + " not implement!");
     }
 }
 
-std::vector<json> GetColumns(SQLWCHAR *connStr)
+std::vector<json> GetColumns(SQLWCHAR *sql)
 {
     std::vector<json> ans;
-    SQLHENV hEnv = SQL_NULL_HENV;    // Môi trường ODBC
-    SQLHDBC hDbc = SQL_NULL_HDBC;    // Kết nối tới CSDL SQL Server
-    SQLHSTMT hStmt = SQL_NULL_HSTMT; // Câu lệnh SQL
-    SQLRETURN ret;
-    // Tạo Environment Handle
-    ret = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &hEnv);
-    ret = SQLSetEnvAttr(
-        hEnv,
-        SQL_ATTR_ODBC_VERSION,
-        (SQLPOINTER)SQL_OV_ODBC3,
-        0);
-    // Tạo Connection Handle
-    ret = SQLAllocHandle(SQL_HANDLE_DBC, hEnv, &hDbc);
     try
     {
-        SQLWCHAR outConnStr[1024];
-        SQLSMALLINT outConnStrLen;
-        ret = SQLDriverConnectW(
-            hDbc,
-            NULL,
-            connStr,
-            SQL_NTS,
-            outConnStr,
-            sizeof(outConnStr) / sizeof(SQLWCHAR),
-            &outConnStrLen,
-            SQL_DRIVER_NOPROMPT);
-        if (!SQL_SUCCEEDED(ret))
-        {
-            throw std::runtime_error(GetError(SQL_HANDLE_DBC, hDbc));
-        }
         ret = SQLAllocHandle(SQL_HANDLE_STMT, hDbc, &hStmt);
         if (!SQL_SUCCEEDED(ret))
         {
@@ -117,7 +151,7 @@ std::vector<json> GetColumns(SQLWCHAR *connStr)
         }
         ret = SQLExecDirectW(
             hStmt,
-            (SQLWCHAR *)L"SELECT TOP (0) * FROM capacitycontrol.FC40_Documents ORDER BY Id DESC",
+            sql,
             SQL_NTS);
         if (!SQL_SUCCEEDED(ret))
         {
@@ -165,11 +199,6 @@ std::vector<json> GetColumns(SQLWCHAR *connStr)
         std::cerr << "Err: " << ex.what() << std::endl;
         ans.clear();
     }
-    // Free
-    SQLDisconnect(hDbc);
-    SQLFreeHandle(SQL_HANDLE_STMT, hStmt);
-    SQLFreeHandle(SQL_HANDLE_DBC, hDbc);
-    SQLFreeHandle(SQL_HANDLE_ENV, hEnv);
     return ans;
 }
 
@@ -203,7 +232,7 @@ std::string WStringToUtf8(const std::wstring &wstr)
     return result;
 }
 
-std::wstring Utf8ToWString(const std::string& str)
+std::wstring Utf8ToWString(const std::string &str)
 {
     if (str.empty())
         return L"";

@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Wall -O2 -g -I../../libs
+CXXFLAGS = -Wall -O2 -I../../libs
 
 LIBS = -lodbc32 -lodbccp32
 

@@ -1,4 +1,5 @@
 #include "db.h"
+#include "util.h"
 
 Db::Db(const wchar_t *connStr)
     : connStr(connStr)
@@ -23,11 +24,7 @@ Db::Db(const wchar_t *connStr)
 
 Db::~Db()
 {
-    if (hDbc != SQL_NULL_HDBC)
-        SQLDisconnect(hDbc);
-
-    if (hStmt != SQL_NULL_HSTMT)
-        SQLFreeHandle(SQL_HANDLE_STMT, hStmt);
+    Disconnect();
 
     if (hDbc != SQL_NULL_HDBC)
         SQLFreeHandle(SQL_HANDLE_DBC, hDbc);
@@ -51,7 +48,20 @@ bool Db::Connect()
         SQL_DRIVER_NOPROMPT);
 
     if (!SQL_SUCCEEDED(ret))
-        return false;
+    {
+        throw std::runtime_error(Util::GetError(SQL_HANDLE_DBC, hDbc));
+    }
 
     return true;
+}
+
+void Db::Disconnect()
+{
+    if (hDbc != SQL_NULL_HDBC)
+        SQLDisconnect(hDbc);
+}
+
+SQLHDBC Db::GetHDBC()
+{
+    return hDbc;
 }

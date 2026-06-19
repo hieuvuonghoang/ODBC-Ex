@@ -1,6 +1,19 @@
 {
     "tasks": [
         {
+            "label": "Build Active File",
+            "type": "shell",
+            "command": "C:\\w64devkit\\bin\\g++.exe",
+            "args": [
+                "-g",
+                "${file}",
+                "-o",
+                "${fileDirname}\\${fileBasenameNoExtension}.exe",
+                "-lodbc32",
+                "-lodbccp32"
+            ]
+        },
+        {
             "label": "Make",
             "type": "shell",
             "command": "make",

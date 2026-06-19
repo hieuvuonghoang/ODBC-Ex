@@ -3,17 +3,14 @@
 
 int main()
 {
-
     wchar_t connStr[] =
         L"Driver={ODBC Driver 18 for SQL Server};"
-        L"Server=10.235.4.14;"
-        L"Database=SAP;"
-        L"UID=userdev;"
-        L"PWD=Wec!@#$1234;"
+        L"Server=10.235.50.105,31433;"
+        L"Database=FC40_CapacityControl;"
+        L"UID=fc40;"
+        L"PWD=Fc40@123456;"
         L"TrustServerCertificate=Yes;";
-
     Db db(connStr);
-
     if (db.Connect())
     {
         std::wcout << L"Connected successfully!" << std::endl;
@@ -22,7 +19,7 @@ int main()
     {
         std::wcout << L"Connection failed!" << std::endl;
     }
-
+    std::cin.get();
     // SQLHENV hEnv = SQL_NULL_HENV;    // Môi trường ODBC
     // SQLHDBC hDbc1 = SQL_NULL_HDBC;   // Kết nối tới CSDL SQL Server
     // SQLHDBC hDbc2 = SQL_NULL_HDBC;   // Kết nối tới CSDL MySQL

@@ -5,18 +5,14 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(gdb) Launch",
+            "name": "(gdb) Active File",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/src/app.exe",
-            "args": [],
+            "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
             "cwd": "${fileDirname}",
-            "environment": [],
-            "externalConsole": true,
             "MIMode": "gdb",
             "miDebuggerPath": "C:\\w64devkit\\bin\\gdb.exe",
-            "preLaunchTask": "Make"
+            "preLaunchTask": "Build Active File"
         }
-
     ]
 }

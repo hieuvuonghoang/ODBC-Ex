@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Wall -O2 -g -I".\libs\ODBC-Specification\Windows\inc"
+CXXFLAGS = -Wall -O2 -g
 
 LIBS = -lodbc32 -lodbccp32
 

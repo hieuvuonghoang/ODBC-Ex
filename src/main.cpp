@@ -24,6 +24,7 @@ int main(int argc, char *argvs[])
     catch (const std::exception &ex)
     {
         std::cerr << ex.what() << std::endl;
+        _getch();
         return 1;
     }
     std::cout << "Press any key to exit...";

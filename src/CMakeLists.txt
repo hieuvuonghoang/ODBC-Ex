@@ -3,110 +3,18 @@ cmake_minimum_required(VERSION 4.3)
 
 project(CreateTable)
 
-add_executable(${PROJECT_NAME})
-
-target_sources(CreateTable
-    PRIVATE
-        main.cpp
-)
-
 #
 
 add_library(rapidcsv INTERFACE)
-
-target_link_libraries(${PROJECT_NAME} PRIVATE rapidcsv)
-
-target_sources(rapidcsv
-  INTERFACE
-    FILE_SET HEADERS
-    BASE_DIRS
-        include
-    FILES
-        include/rapidcsv.h
-)
+target_include_directories(rapidcsv INTERFACE include)
 
 add_library(nlohmann_json INTERFACE)
-
-target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json)
-
-target_sources(nlohmann_json
-  INTERFACE
-    FILE_SET HEADERS
-    BASE_DIRS
-        include
-    FILES
-        include/json.hpp
-)
+target_include_directories(nlohmann_json INTERFACE include)
 
 #
-target_link_libraries(${PROJECT_NAME} PRIVATE Db)
-
-add_library(Db)
-
-target_sources(Db
-  PRIVATE
-    db.cpp
-
-  PUBLIC
-    FILE_SET HEADERS
-    FILES
-      db.h
-)
-
-target_link_libraries(Db
-    PRIVATE
-        odbc32
-        odbccp32
-)
-
-#
-
-target_link_libraries(${PROJECT_NAME} PRIVATE Config)
-
-add_library(Config)
-
-target_sources(Config
-  PRIVATE
-    config.cpp
-
-  PUBLIC
-    FILE_SET HEADERS
-    FILES
-      config.h
-)
-
-target_link_libraries(Config PRIVATE nlohmann_json)
-
-#
-target_link_libraries(${PROJECT_NAME} PRIVATE Table)
-
-add_library(Table)
-
-target_sources(Table
-  PRIVATE
-    table.cpp
-
-  PUBLIC
-    FILE_SET HEADERS
-    FILES
-      table.h
-)
-
-target_link_libraries(Table PRIVATE rapidcsv)
-
-#
-target_link_libraries(Table PRIVATE Util)
-
-add_library(Util)
-
-target_sources(Util
-  PRIVATE
+add_library(Util STATIC
     util.cpp
-
-  PUBLIC
-    FILE_SET HEADERS
-    FILES
-      util.h
+    util.h
 )
 
 target_link_libraries(Util
@@ -115,17 +23,64 @@ target_link_libraries(Util
         odbccp32
 )
 
+target_include_directories(Util PUBLIC include)
+
 #
-target_link_libraries(Table PRIVATE Column)
+add_library(Db STATIC
+    db.cpp
+    db.h
+)
 
-add_library(Column)
+target_link_libraries(Db
+    PRIVATE
+        odbc32
+        odbccp32
+)
 
-target_sources(Column
-  PRIVATE
+target_include_directories(Db PUBLIC include)
+
+#
+add_library(Config STATIC
+    config.cpp
+    config.h
+)
+
+target_link_libraries(Config
+    PRIVATE
+        nlohmann_json
+)
+
+target_include_directories(Config PUBLIC include)
+
+#
+add_library(Table STATIC
+    table.cpp
+    table.h
+)
+
+target_link_libraries(Table
+    PRIVATE
+        rapidcsv
+        Util
+        Column
+)
+
+target_include_directories(Table PUBLIC include)
+
+#
+add_library(Column STATIC
     column.cpp
+    column.h
+)
 
-  PUBLIC
-    FILE_SET HEADERS
-    FILES
-      column.h
+target_include_directories(Column PUBLIC include)
+
+#
+add_executable(${PROJECT_NAME} main.cpp)
+
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE
+        Db
+        Config
+        Table
 )

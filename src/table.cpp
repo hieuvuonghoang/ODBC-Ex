@@ -1,8 +1,27 @@
 #include "table.h"
 
-Table::Table(std::wstring name)
+Table::Table(std::string name)
 {
     this->name = name;
+}
+
+Table::Table(std::string name,
+             std::string system_name,
+             std::string business_unit,
+             std::string system_owner,
+             std::string table_name,
+             std::string data_owner,
+             std::string partition_information,
+             std::string synchronization_type)
+    : name(std::move(name)),
+      system_name(std::move(system_name)),
+      business_unit(std::move(business_unit)),
+      system_owner(std::move(system_owner)),
+      table_name(std::move(table_name)),
+      data_owner(std::move(data_owner)),
+      partition_information(std::move(partition_information)),
+      synchronization_type(std::move(synchronization_type))
+{
 }
 
 void Table::SetColumns(SQLHDBC hDbc)
@@ -20,7 +39,7 @@ void Table::SetColumns(SQLHDBC hDbc)
         std::wstring sql =
             L"SELECT TOP (0) * "
             L"FROM " +
-            this->name +
+            Util::Utf8ToWString(this->name) +
             L" ORDER BY Id ASC";
         ret = SQLExecDirectW(
             hStmt,
@@ -78,4 +97,34 @@ void Table::SetColumns(SQLHDBC hDbc)
     }
     if (hStmt != SQL_NULL_HSTMT)
         SQLFreeHandle(SQL_HANDLE_STMT, hStmt);
+}
+
+std::vector<Table> Table::GetTables(const char *file_name)
+{
+    std::vector<Table> result;
+    rapidcsv::Document doc(file_name);
+    size_t row_count = doc.GetRowCount();
+    std::vector<std::string> table_name_in_db = doc.GetColumn<std::string>("table_name_in_db");
+    std::vector<std::string> table_name_in_databrick = doc.GetColumn<std::string>("table_name_in_databrick");
+    std::vector<std::string> system_name = doc.GetColumn<std::string>("system_name");
+    std::vector<std::string> business_unit = doc.GetColumn<std::string>("business_unit");
+    std::vector<std::string> system_owner = doc.GetColumn<std::string>("system_owner");
+    std::vector<std::string> data_owner = doc.GetColumn<std::string>("data_owner");
+    std::vector<std::string> partition_information = doc.GetColumn<std::string>("partition_information");
+    std::vector<std::string> synchronization_type = doc.GetColumn<std::string>("synchronization_type");
+    for (size_t row = 0; row < row_count; row++)
+    {
+        Table table = Table(
+            table_name_in_db.at(row),
+            system_name.at(row),
+            business_unit.at(row),
+            system_owner.at(row),
+            table_name_in_databrick.at(row),
+            data_owner.at(row),
+            partition_information.at(row),
+            synchronization_type.at(row)
+        );
+        result.push_back(table);
+    }
+    return result;
 }

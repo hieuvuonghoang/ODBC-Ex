@@ -35,6 +35,32 @@ std::string Util::GetTypeName(SQLSMALLINT type, std::string columnName)
     }
 }
 
+std::wstring Util::Utf8ToWString(const std::string &str)
+{
+    if (str.empty())
+        return L"";
+
+    int len = MultiByteToWideChar(
+        CP_UTF8,
+        0,
+        str.c_str(),
+        -1,
+        NULL,
+        0);
+
+    std::wstring result(len - 1, L'\0');
+
+    MultiByteToWideChar(
+        CP_UTF8,
+        0,
+        str.c_str(),
+        -1,
+        &result[0],
+        len);
+
+    return result;
+}
+
 std::string Util::WStringToUtf8(const std::wstring &wstr)
 {
     if (wstr.empty())

@@ -6,7 +6,7 @@
 #include "util.h"
 #include "column.h"
 
-int main()
+int main(int argc, char *argvs[])
 {
     try
     {
@@ -16,13 +16,7 @@ int main()
 
         db.Connect();
 
-        std::vector<Table> tables;
-
-        tables.emplace_back(
-            L"capacitycontrol.FC40_Documents");
-
-        tables.emplace_back(
-            L"capacitycontrol.FC40_DocumentDetails");
+        std::vector<Table> tables = Table::GetTables("input.csv");
 
         for (auto &table : tables)
         {

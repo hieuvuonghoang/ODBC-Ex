@@ -12,6 +12,9 @@ SRC = main.cpp util.cpp db.cpp config.cpp table.cpp column.cpp
 # TARGET = get-installed-drives
 # SRC = get-installed-drives.cpp
 
+# TARGET = csv
+# SRC = csv.cpp util.cpp
+
 $(TARGET): $(SRC)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
 

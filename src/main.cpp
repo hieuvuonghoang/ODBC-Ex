@@ -3,8 +3,6 @@
 #include "db.h"
 #include "config.h"
 #include "table.h"
-#include "util.h"
-#include "column.h"
 
 int main(int argc, char *argvs[])
 {

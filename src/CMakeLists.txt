@@ -1,7 +1,7 @@
 
 #
 
-add_library(databricklib STATIC
+add_library(databrick STATIC
     util.cpp
     db.cpp
     table.cpp
@@ -9,6 +9,6 @@ add_library(databricklib STATIC
     config.cpp
 )
 
-target_link_libraries(databricklib PRIVATE libs odbc32 odbccp32)
+target_link_libraries(databrick PRIVATE libs odbc32 odbccp32)
 
-target_include_directories(databricklib PUBLIC ${CMAKE_SOURCE_DIR}/include)
+target_include_directories(databrick PUBLIC ${CMAKE_SOURCE_DIR}/include)

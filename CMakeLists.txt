@@ -13,10 +13,7 @@ add_subdirectory(src)
 
 add_executable(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/app/main.cpp)
 
-target_link_libraries(${PROJECT_NAME}
-    PRIVATE
-        databricklib
-)
+target_link_libraries(${PROJECT_NAME} PRIVATE databrick)
 
 #
 

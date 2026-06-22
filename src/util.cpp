@@ -1,7 +1,7 @@
 
 #include "util.h"
 
-std::string Util::GetTypeName(SQLSMALLINT type, std::string columnName)
+std::string databricks::Util::GetTypeName(SQLSMALLINT type, std::string columnName)
 {
     switch (type)
     {
@@ -35,7 +35,7 @@ std::string Util::GetTypeName(SQLSMALLINT type, std::string columnName)
     }
 }
 
-std::wstring Util::Utf8ToWString(const std::string &str)
+std::wstring databricks::Util::Utf8ToWString(const std::string &str)
 {
     if (str.empty())
         return L"";
@@ -61,7 +61,7 @@ std::wstring Util::Utf8ToWString(const std::string &str)
     return result;
 }
 
-std::string Util::WStringToUtf8(const std::wstring &wstr)
+std::string databricks::Util::WStringToUtf8(const std::wstring &wstr)
 {
     if (wstr.empty())
         return "";
@@ -91,7 +91,7 @@ std::string Util::WStringToUtf8(const std::wstring &wstr)
     return result;
 }
 
-std::string Util::GetError(SQLSMALLINT handleType, SQLHANDLE handle)
+std::string databricks::Util::GetError(SQLSMALLINT handleType, SQLHANDLE handle)
 {
     std::string result;
     SQLWCHAR sqlState[6];

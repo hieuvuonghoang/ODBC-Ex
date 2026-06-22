@@ -1,7 +1,7 @@
 #include "db.h"
 #include "util.h"
 
-Db::Db(const wchar_t *connStr)
+databricks::Db::Db(const wchar_t *connStr)
     : connStr(connStr)
 {
 
@@ -22,7 +22,7 @@ Db::Db(const wchar_t *connStr)
         &hDbc);
 }
 
-Db::~Db()
+databricks::Db::~Db()
 {
     Disconnect();
 
@@ -33,7 +33,7 @@ Db::~Db()
         SQLFreeHandle(SQL_HANDLE_ENV, hEnv);
 }
 
-bool Db::Connect()
+bool databricks::Db::Connect()
 {
     SQLRETURN ret;
 
@@ -49,19 +49,19 @@ bool Db::Connect()
 
     if (!SQL_SUCCEEDED(ret))
     {
-        throw std::runtime_error(Util::GetError(SQL_HANDLE_DBC, hDbc));
+        throw std::runtime_error(databricks::Util::GetError(SQL_HANDLE_DBC, hDbc));
     }
 
     return true;
 }
 
-void Db::Disconnect()
+void databricks::Db::Disconnect()
 {
     if (hDbc != SQL_NULL_HDBC)
         SQLDisconnect(hDbc);
 }
 
-SQLHDBC Db::GetHDBC()
+SQLHDBC databricks::Db::GetHDBC()
 {
     return hDbc;
 }

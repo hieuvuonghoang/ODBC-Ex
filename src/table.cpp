@@ -1,11 +1,12 @@
 #include "table.h"
+#include <rapidcsv.h>
 
-Table::Table(std::string name)
+databricks::Table::Table(std::string name)
 {
     this->name = name;
 }
 
-Table::Table(std::string name,
+databricks::Table::Table(std::string name,
              std::string system_name,
              std::string business_unit,
              std::string system_owner,
@@ -24,7 +25,7 @@ Table::Table(std::string name,
 {
 }
 
-void Table::SetColumns(SQLHDBC hDbc)
+void databricks::Table::SetColumns(SQLHDBC hDbc)
 {
     this->columns.clear();
     this->columns.shrink_to_fit();
@@ -99,7 +100,7 @@ void Table::SetColumns(SQLHDBC hDbc)
         SQLFreeHandle(SQL_HANDLE_STMT, hStmt);
 }
 
-std::vector<Table> Table::GetTables(const char *file_name)
+std::vector<databricks::Table> databricks::Table::GetTables(const char *file_name)
 {
     std::vector<Table> result;
     rapidcsv::Document doc(file_name);

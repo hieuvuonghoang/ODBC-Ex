@@ -1,7 +1,8 @@
 
 #include "config.h"
+#include <nlohmann/json.hpp>
 
-Config::Config(const char *file_name) : _file_name(file_name)
+databricks::Config::Config(const char *file_name) : _file_name(file_name)
 {
     std::ifstream file_config(_file_name.c_str());
     nlohmann::json j;
@@ -16,6 +17,6 @@ Config::Config(const char *file_name) : _file_name(file_name)
     );
 }
 
-const std::wstring& Config::GetConnectStr() const {
+const std::wstring& databricks::Config::GetConnectStr() const {
     return _conn_str;
 }

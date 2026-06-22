@@ -4,6 +4,8 @@
 #include "config.h"
 #include "table.h"
 
+using namespace databricks;
+
 int main(int argc, char *argvs[])
 {
     try

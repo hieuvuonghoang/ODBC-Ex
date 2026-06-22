@@ -1,3 +1,0 @@
-{
-    "connectStr": "Driver={ODBC Driver 18 for SQL Server};Server=10.235.50.105,31433;Database=FC40_CapacityControl;UID=fc40;PWD=Fc40@123456;TrustServerCertificate=Yes;"
-}

@@ -9,6 +9,18 @@ add_library(databrick STATIC
     config.cpp
 )
 
-target_link_libraries(databrick PRIVATE libs odbc32 odbccp32)
+
+target_link_libraries(databrick PUBLIC 
+    libs)
+
+target_link_libraries(databrick PRIVATE  
+    odbc32 
+    odbccp32 
+    ws2_32
+    ssl
+    crypto
+    crypt32)
+
+target_compile_definitions(databrick PRIVATE _WIN32_WINNT=0x0A00)
 
 target_include_directories(databrick PUBLIC ${CMAKE_SOURCE_DIR}/include)

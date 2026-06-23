@@ -7,6 +7,7 @@
 #include <sql.h>
 #include "column.h"
 #include "util.h"
+#include "config.h"
 
 namespace databricks
 {
@@ -22,6 +23,9 @@ namespace databricks
         std::string data_owner;
         std::string partition_information;
         std::string synchronization_type;
+        std::string table_id;
+        bool success;
+        std::string mes;
         std::vector<Column> columns;
 
     public:
@@ -49,9 +53,19 @@ namespace databricks
         /// @brief
         /// @param hDBC
         void SetColumns(SQLHDBC hDBC);
+        /// @brief 
+        /// @param config 
+        void CreateTable(const Config *config);
+        /// @brief 
+        /// @return 
+        std::string GetBody();
         /// @brief
         /// @param file_name
         /// @return
         static std::vector<Table> GetTables(const char *file_name);
+        /// @brief 
+        /// @param tables 
+        /// @param file_name 
+        static void SaveCsv(const std::vector<Table>& tables, const char* file_name);
     };
 }

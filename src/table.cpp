@@ -1,5 +1,9 @@
 #include "table.h"
 #include <rapidcsv.h>
+#include <nlohmann/json.hpp>
+
+#define CPPHTTPLIB_OPENSSL_SUPPORT
+#include <httplib.h>
 
 databricks::Table::Table(std::string name)
 {
@@ -7,13 +11,13 @@ databricks::Table::Table(std::string name)
 }
 
 databricks::Table::Table(std::string name,
-             std::string system_name,
-             std::string business_unit,
-             std::string system_owner,
-             std::string table_name,
-             std::string data_owner,
-             std::string partition_information,
-             std::string synchronization_type)
+                         std::string system_name,
+                         std::string business_unit,
+                         std::string system_owner,
+                         std::string table_name,
+                         std::string data_owner,
+                         std::string partition_information,
+                         std::string synchronization_type)
     : name(std::move(name)),
       system_name(std::move(system_name)),
       business_unit(std::move(business_unit)),
@@ -100,6 +104,64 @@ void databricks::Table::SetColumns(SQLHDBC hDbc)
         SQLFreeHandle(SQL_HANDLE_STMT, hStmt);
 }
 
+std::string databricks::Table::GetBody()
+{
+    nlohmann::json jColumns = {
+        {"columns", this->columns}};
+
+    nlohmann::json j = {
+        {"system_name", this->system_name},
+        {"business_unit", this->business_unit},
+        {"system_owner", this->system_owner},
+        {"table_name", this->table_name},
+        {"data_owner", this->data_owner},
+        {"partition_information", this->partition_information},
+        {"synchronization_type", this->synchronization_type},
+        {"data_schema", jColumns}};
+
+    return j.dump();
+}
+
+void databricks::Table::CreateTable(const Config *config)
+{
+    httplib::Client cli(config->GetBaseUrl());
+    httplib::Request req;
+    req.method = "POST";
+    req.path = config->GetCreateTableAPI();
+    req.body = this->GetBody();
+    req.set_header("Content-Type", "application/json");
+    req.set_header("ocp-apim-subscription-key", config->GetAPIKey());
+    auto res = cli.send(req);
+    this->success = false;
+    if (res)
+    {
+        if (res->status == 200)
+        {
+            this->success = true;
+            nlohmann::json j = nlohmann::json::parse(res->body);
+            this->table_id = j.at("table_id").get<std::string>();
+            this->mes = j.at("message").get<std::string>();
+            // std::cout << "Table ID: " << this->table_id << "\n";
+        }
+        else if (res->status == 500)
+        {
+            nlohmann::json j = nlohmann::json::parse(res->body);
+            this->mes = j.at("detail").get<std::string>();
+            // std::cout << "Error: " << this->mes << "\n";
+        }
+        else
+        {
+            std::cout << "Status: " << res->status << "\n";
+            nlohmann::json j = nlohmann::json::parse(res->body);
+            std::cout << "Error: " << j.dump(2) << "\n";
+        }
+    }
+    else
+    {
+        this->mes = "Request failed!";
+    }
+}
+
 std::vector<databricks::Table> databricks::Table::GetTables(const char *file_name)
 {
     std::vector<Table> result;
@@ -123,9 +185,32 @@ std::vector<databricks::Table> databricks::Table::GetTables(const char *file_nam
             table_name_in_databrick.at(row),
             data_owner.at(row),
             partition_information.at(row),
-            synchronization_type.at(row)
-        );
+            synchronization_type.at(row));
         result.push_back(table);
     }
     return result;
+}
+
+void databricks::Table::SaveCsv(const std::vector<Table>& tables, const char* file_name)
+{
+    std::ofstream file(file_name);
+
+    if (!file.is_open()) {
+        std::cout << "Cannot open file!\n";
+        return;
+    }
+
+    // Header
+    file << "table_name_in_db,table_name_in_databrick,table_id,success,message\n";
+
+    for (const auto& table : tables) {
+        file << table.name << ","
+             << table.table_name << ","
+             << table.table_id << ","
+             << table.success << ","
+             << table.mes
+             << "\n";
+    }
+
+    file.close();
 }

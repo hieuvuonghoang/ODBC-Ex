@@ -1,3 +1,8 @@
 {
-    "connectStr": "Driver={ODBC Driver 18 for SQL Server};Server=10.235.50.105,31433;Database=FC40_CapacityControl;UID=fc40;PWD=Fc40@123456;TrustServerCertificate=Yes;"
+    "connectStr": "Driver={ODBC Driver 18 for SQL Server};Server=10.235.50.105,31433;Database=FC40_CapacityControl;UID=fc40;PWD=Fc40@123456;TrustServerCertificate=Yes;",
+    "dataBrickAPI": {
+        "apiKey": "f1eaa07fb21340b198d88ae00df77db3",
+        "baseUrl": "https://apim-udp-dev-sea-001.azure-api.net",
+        "createTableAPI": "/fa-udp-data-ingestion-services-sub/v2/create_table"
+    }
 }

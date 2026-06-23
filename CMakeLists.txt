@@ -1,23 +1,35 @@
 
 cmake_minimum_required(VERSION 4.3)
 
-project(httplib)
-
-
+project(CreateTable)
 
 #
 add_subdirectory(libs)
 
 #
+add_subdirectory(src)
+
+#
 
 add_executable(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/app/main.cpp)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE
-    libs
-    ws2_32
-    ssl
-    crypto
-    crypt32
+target_link_libraries(${PROJECT_NAME} PRIVATE databrick)
+
+# target_compile_definitions(${PROJECT_NAME} PRIVATE _WIN32_WINNT=0x0A00)
+
+#
+
+set(RESOURCE_FILES
+    config.json
+    input.csv
 )
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE _WIN32_WINNT=0x0A00)
+foreach(file ${RESOURCE_FILES})
+    add_custom_command(
+        TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${CMAKE_SOURCE_DIR}/app/${file}
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/${file}
+    )
+endforeach()
+

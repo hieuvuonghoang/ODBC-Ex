@@ -1,34 +1,20 @@
+#define CPPHTTPLIB_OPENSSL_SUPPORT
+
 #include <iostream>
 #include <conio.h>
-#include "db.h"
-#include "config.h"
-#include "table.h"
-
-using namespace databricks;
+#include <httplib.h>
 
 int main(int argc, char *argvs[])
 {
-    try
+    // HTTPS
+    httplib::Client cli("https://yhirose.github.io");
+
+    if (auto res = cli.Get("/hi"))
     {
-        Config config("config.json");
-
-        Db db(config.GetConnectStr().c_str());
-
-        db.Connect();
-
-        std::vector<Table> tables = Table::GetTables("input.csv");
-
-        for (auto &table : tables)
-        {
-            table.SetColumns(db.GetHDBC());
-        }
-    }
-    catch (const std::exception &ex)
-    {
-        std::cerr << ex.what() << std::endl;
-        _getch();
-        return 1;
+        res->status;
+        res->body;
     }
     std::cout << "Press any key to exit...";
     _getch();
+    return 0;
 }

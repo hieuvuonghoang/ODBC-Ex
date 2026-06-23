@@ -3,7 +3,7 @@
         {
             "label": "Build Active File",
             "type": "shell",
-            "command": "C:\\w64devkit\\bin\\g++.exe",
+            "command": "C:\\msys64\\ucrt64\\bin\\g++.exe",
             "args": [
                 "-g",
                 "${file}",

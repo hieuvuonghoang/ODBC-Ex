@@ -11,7 +11,7 @@
             "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
             "cwd": "${fileDirname}",
             "MIMode": "gdb",
-            "miDebuggerPath": "C:\\w64devkit\\bin\\gdb.exe",
+            "miDebuggerPath": "C:\\msys64\\ucrt64\\bin\\gdb.exe",
             "preLaunchTask": "Build Active File"
         }
     ]

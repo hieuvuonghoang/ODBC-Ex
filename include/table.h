@@ -50,22 +50,26 @@ namespace databricks
             std::string data_owner,
             std::string partition_information,
             std::string synchronization_type);
-        /// @brief
-        /// @param hDBC
-        void SetColumns(SQLHDBC hDBC);
-        /// @brief 
-        /// @param config 
-        void CreateTable(const Config *config);
         /// @brief 
         /// @return 
-        std::string GetBody();
-        /// @brief
-        /// @param file_name
-        /// @return
-        static std::vector<Table> GetTables(const char *file_name);
+        const std::string& GetTableName() const;
         /// @brief 
-        /// @param tables 
-        /// @param file_name 
-        static void SaveCsv(const std::vector<Table>& tables, const char* file_name);
+        /// @return 
+        std::string GetBody() const;
+        /// @brief 
+        /// @return 
+        std::string ToCsvRow() const;
+        /// @brief
+        /// @param columns
+        void SetColumns(std::vector<Column> columns);
+        /// @brief 
+        /// @param tableId 
+        void SetTableId(std::string tableId);
+        /// @brief 
+        /// @param mes 
+        void SetMes(std::string mes);
+        /// @brief 
+        /// @param success 
+        void SetSuccess(bool success);
     };
 }

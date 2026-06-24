@@ -1,8 +1,10 @@
 #include "db.h"
 #include "util.h"
 
-databricks::Db::Db(const wchar_t *connStr)
-    : connStr(connStr)
+using namespace databricks;
+
+Db::Db(const std::string& connectionString)
+    : connStr(connectionString)
 {
 
     SQLAllocHandle(
@@ -22,7 +24,7 @@ databricks::Db::Db(const wchar_t *connStr)
         &hDbc);
 }
 
-databricks::Db::~Db()
+Db::~Db()
 {
     Disconnect();
 
@@ -33,14 +35,16 @@ databricks::Db::~Db()
         SQLFreeHandle(SQL_HANDLE_ENV, hEnv);
 }
 
-bool databricks::Db::Connect()
+bool Db::Connect()
 {
     SQLRETURN ret;
+
+    std::wstring connWStr =  Util::Utf8ToWString(connStr);
 
     ret = SQLDriverConnectW(
         hDbc,
         NULL,
-        (SQLWCHAR *)connStr.c_str(),
+        (SQLWCHAR *)connWStr.c_str(),
         SQL_NTS,
         NULL,
         0,
@@ -55,13 +59,13 @@ bool databricks::Db::Connect()
     return true;
 }
 
-void databricks::Db::Disconnect()
+void Db::Disconnect()
 {
     if (hDbc != SQL_NULL_HDBC)
         SQLDisconnect(hDbc);
 }
 
-SQLHDBC databricks::Db::GetHDBC()
+SQLHDBC Db::GetHDBC() const
 {
     return hDbc;
 }

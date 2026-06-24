@@ -7,6 +7,9 @@ add_library(databrick STATIC
     table.cpp
     column.cpp
     config.cpp
+    db_metadata_service.cpp
+    csv_service.cpp
+    dbr_api_service.cpp
 )
 
 

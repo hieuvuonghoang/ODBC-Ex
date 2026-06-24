@@ -2,7 +2,9 @@
 #include <conio.h>
 #include "db.h"
 #include "config.h"
-#include "table.h"
+#include "db_metadata_service.h"
+#include "csv_service.h"
+#include "dbr_api_service.h"
 
 using namespace databricks;
 
@@ -10,28 +12,36 @@ int main(int argc, char *argvs[])
 {
     try
     {
-        Config config("config.json");
-
-        Db db(config.GetConnectStr().c_str());
-
+        const std::string configFile = "config.json";
+        const std::string inputFile = "input.csv";
+        const std::string outPutFile = "output.csv";
+        Config config(configFile);
+        DBRApiService dbrApiService(config);
+        
+        Db db(config.GetConnectStr());
         db.Connect();
+        std::cout << "Connect DB success!" << std::endl;
 
-        std::vector<Table> tables = Table::GetTables("input.csv");
+        DbMetadataService dbMetadataService(db);
+        CSVService csvService;
+
+        auto tables = csvService.ReadDatas(inputFile);
 
         for (auto &table : tables)
         {
-            table.SetColumns(db.GetHDBC());
-            table.CreateTable(&config);
+            auto tableName = table.GetTableName();
+            std::cout << "Table name: " << tableName << std::endl;
+            auto columns = dbMetadataService.GetColumns(tableName);
+            table.SetColumns(columns);
+            dbrApiService.CreateTable(table);
         }
 
-        databricks::Table::SaveCsv(tables, "output.csv");
+        csvService.WriteDatas(tables, outPutFile);
     }
     catch (const std::exception &ex)
     {
         std::cerr << ex.what() << std::endl;
-        _getch();
         return 1;
     }
-    std::cout << "Press any key to exit...";
-    _getch();
+    return 0;
 }

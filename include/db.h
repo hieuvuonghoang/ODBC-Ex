@@ -2,7 +2,7 @@
 #pragma once
 
 #include <windows.h>
-#include <sqlext.h>
+#include <sql.h>
 #include <iostream>
 #include <string>
 
@@ -13,11 +13,11 @@ namespace databricks
     private:
         SQLHENV hEnv = SQL_NULL_HENV;
         SQLHDBC hDbc = SQL_NULL_HDBC;
-        std::wstring connStr;
+        std::string connStr;
 
     public:
-        Db(const wchar_t *connStr);
-        SQLHDBC GetHDBC();
+        Db(const std::string& connectionString);
+        SQLHDBC GetHDBC() const;
         bool Connect();
         void Disconnect();
         ~Db();

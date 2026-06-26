@@ -1,2 +1,5 @@
 table_name_in_db,table_name_in_databrick,system_name,business_unit,system_owner,data_owner,partition_information,synchronization_type
-dbo.DIM_XNDP,test_wineco_2504,wineco,wineco,hieuvh@crownx.masangroup.com,hieuvh@crownx.masangroup.com,,Batch
+dbo.DIM_WEC_AP,ap,powerbi,wineco,khiemhd@crownx.masangroup.com,khiemhd@crownx.masangroup.com,,Batch
+dbo.DIM_WEC_FC,fc,powerbi,wineco,khiemhd@crownx.masangroup.com,khiemhd@crownx.masangroup.com,,Batch
+dbo.CH_PO,ch_po,powerbi,wineco,khiemhd@crownx.masangroup.com,khiemhd@crownx.masangroup.com,,Batch
+dbo.DIM_LSX_V1,lsx_dd,powerbi,wineco,khiemhd@crownx.masangroup.com,khiemhd@crownx.masangroup.com,,Batch

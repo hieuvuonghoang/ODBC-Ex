@@ -26,8 +26,7 @@ std::vector<Column> DbMetadataService::GetColumns(const std::string &tableName) 
         std::wstring sql =
             L"SELECT TOP (0) * "
             L"FROM " +
-            Util::Utf8ToWString(tableName) +
-            L" ORDER BY Id ASC";
+            Util::Utf8ToWString(tableName);
         ret = SQLExecDirectW(
             hStmt,
             (SQLWCHAR *)sql.c_str(),

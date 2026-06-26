@@ -15,6 +15,7 @@ std::string databricks::Util::GetTypeName(SQLSMALLINT type, std::string columnNa
     case SQL_CHAR:
     case SQL_VARCHAR:
     case SQL_WVARCHAR:
+    case -11:
         return "STRING";
     case SQL_INTEGER:
     case SQL_SMALLINT:

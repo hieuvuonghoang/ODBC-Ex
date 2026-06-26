@@ -1,5 +1,5 @@
 {
-    "connectStr": "Driver={ODBC Driver 18 for SQL Server};Server=10.235.4.146,1433;Database=ITPortal;UID=userdev;PWD=Wec!@#$1234;TrustServerCertificate=Yes;",
+    "connectStr": "Driver={ODBC Driver 18 for SQL Server};Server=10.235.4.146,1433;Database=PowerBI;UID=userdev;PWD=Wec!@#$1234;TrustServerCertificate=Yes;",
     "dataBrickAPI": {
         "apiKey": "f1eaa07fb21340b198d88ae00df77db3",
         "baseUrl": "https://apim-udp-dev-sea-001.azure-api.net",

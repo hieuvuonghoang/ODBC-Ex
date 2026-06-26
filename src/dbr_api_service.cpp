@@ -33,6 +33,7 @@ void DBRApiService::CreateTable(Table& table) const {
             nlohmann::json j = nlohmann::json::parse(res->body);
             table.SetTableId(j.at("table_id").get<std::string>());
             table.SetMes(j.at("message").get<std::string>());
+            std::cout << "\tTableId: " << j.at("table_id").get<std::string>() << std::endl;
         }
         else if (res->status == 500)
         {

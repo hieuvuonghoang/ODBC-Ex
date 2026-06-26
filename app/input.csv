@@ -1,3 +1,2 @@
 table_name_in_db,table_name_in_databrick,system_name,business_unit,system_owner,data_owner,partition_information,synchronization_type
-capacitycontrol.FC40_Documents,test_wineco_110,wineco,wineco,test@example.com,test@example.com,,Batch
-capacitycontrol.FC40_DocumentDetails,test_wineco_111,wineco,wineco,test@example.com,test@example.com,,Batch
+dbo.DIM_XNDP,test_wineco_2504,wineco,wineco,hieuvh@crownx.masangroup.com,hieuvh@crownx.masangroup.com,,Batch

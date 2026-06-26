@@ -17,19 +17,21 @@ std::string databricks::Util::GetTypeName(SQLSMALLINT type, std::string columnNa
     case SQL_WVARCHAR:
         return "STRING";
     case SQL_INTEGER:
+    case SQL_SMALLINT:
         return "INT";
     case SQL_BIGINT:
         return "BIGINT";
+    case SQL_FLOAT:
     case SQL_DOUBLE:
-        return "DOUBLE";
+    case SQL_DECIMAL:
+    case SQL_NUMERIC:
+        return "DECIMAL(10,3)";
     case SQL_BIT:
-        return "SMALLINT";
+        return "BOOLEAN";
     case SQL_BINARY:
     case SQL_VARBINARY:
     case SQL_LONGVARBINARY:
         return "BINARY";
-    case SQL_DECIMAL:
-        return "DECIMAL";
     default:
         throw std::runtime_error("Column " + columnName + ", type = " + std::to_string(type) + " not implement!");
     }

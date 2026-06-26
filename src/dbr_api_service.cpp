@@ -42,8 +42,7 @@ void DBRApiService::CreateTable(Table& table) const {
         else
         {
             std::cout << "Status: " << res->status << "\n";
-            nlohmann::json j = nlohmann::json::parse(res->body);
-            std::cout << "Error: " << j.dump(2) << "\n";
+            std::cout << "Error: " << res->body << "\n";
         }
     }
     else

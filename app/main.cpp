@@ -31,8 +31,11 @@ int main(int argc, char *argvs[])
         {
             auto tableName = table.GetTableName();
             std::cout << "Table name: " << tableName << std::endl;
+            std::cout << "\tGet columns." << std::endl;
             auto columns = dbMetadataService.GetColumns(tableName);
+            std::cout << "\tSet columns." << std::endl;
             table.SetColumns(columns);
+            std::cout << "\tCreate table." << std::endl;
             dbrApiService.CreateTable(table);
         }
 
